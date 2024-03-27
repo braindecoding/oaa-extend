@@ -3,6 +3,18 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# experiment result
+V1_1x1_mse/
+V1_1x1_resultmse/
+V1_1x1_resultpict/
+V1_1x1_results/
+rec/
+recm/
+skormiyawaki.csv
+skorvae.csv
+stim/
+
+
 # C extensions
 *.so
 
