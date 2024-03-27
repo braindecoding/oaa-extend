@@ -341,7 +341,7 @@ def plotDGMM(label,pred,predm,mse,msem,matfile,n,arch,experimentname):
         col.set_xticklabels([])
         col.set_xticks([])
         col.imshow(pm.reshape((10,10)).T, cmap=plt.cm.gray,interpolation='nearest')
-    plt.suptitle(' Perbandingan Rekonstruksi '+arch+' dan SLR, bagian ke-'+str(n), fontsize=16)
+    plt.suptitle(' Comparison of '+arch+' and SLR Reconstruction, part '+str(n), fontsize=16)
     # plt.show()
     plt.savefig(fname1)
     
@@ -353,7 +353,7 @@ def plotDGMM(label,pred,predm,mse,msem,matfile,n,arch,experimentname):
     axe.legend(loc = 'lower left')
     axe.set_xticks(idx)
     # plt.show()
-    plt.suptitle('Perbandingan Mean Square Error', fontsize=16)
+    plt.suptitle('Comparison of Mean Square Error', fontsize=16)
     plt.savefig(fname2)
     
     import PIL
