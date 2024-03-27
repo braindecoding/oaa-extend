@@ -1,0 +1,8 @@
+numpy
+matplotlib
+scipy
+scikit-image
+scikit-learn
+tensorflow
+tensorflow_addons
+pytorch-fid
