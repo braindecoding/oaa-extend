@@ -501,25 +501,6 @@ for i in range(len(rec)):
 # Save rec miyawaki array as images
 for i in range(len(rec)):
     save_array_as_image(np.rot90(np.fliplr(Miyawaki_2[i].reshape(10, 10))), f'recm/image_{i}.png')
-    
-# =============================================================================
-# from lib.fid import calculate_fid
-# if __name__ == '__main__':
-#     # Calculate FID - Frechet Inception Distance (FID)
-#     fid_value = calculate_fid("stim","rec")
-#     print('FID:', fid_value)
-#     f = open(experimentname+"_"+str(fid_value)+".txt", "a")
-#     f.write(str(fid_value))
-#     f.close()
-# =============================================================================
-
-# Calculate IS
-#is_score, is_std = calculate_inception_score(rec, batch_size=32, resize=True, splits=10)
-#print('Inception Score:', is_score, '±', is_std)
-
-#is_mean, is_std = calculate_is(generated_images)
-#print('Inception Score - Mean:', is_mean)
-#print('Inception Score - Std:', is_std)
 
 # Continue with the rest of your existing code
 scoreresults = simpanScore(stim, rec, matfile, 'VAE')
