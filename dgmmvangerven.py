@@ -260,6 +260,7 @@ plot_folder=rootfolder+"plot"
 fname1=plot_folder+"/fig.png"
 fname2=plot_folder+"/graph.png"
 fnamegab=plot_folder+"/result.png"
+createfolder(plot_folder)
 
 
 title="Reconnstruction Result with Z="+sys.argv[1]+", IDM="+sys.argv[2]+", Batch="+sys.argv[3]+", Iter="+sys.argv[4]
