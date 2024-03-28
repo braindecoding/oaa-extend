@@ -55,7 +55,7 @@ def simpanSemuaGambar(pxlb,piksel,matfile):
         simpanGambar(stim,recon,getfigpath(matfile,'reconstruct',n))
         n=n+1
 
-def simpanScore28(label,pred,matfile,arch):
+def simpanScore28(label,pred,fname):
     allres=np.zeros(shape=(1,4))
     for limagerow,predimagerow in zip(label,pred):
         mlabel=rowtoimagematrix28(limagerow)
@@ -66,8 +66,6 @@ def simpanScore28(label,pred,matfile,arch):
         corrresult=corrscore(mlabel,mpred)
         therow=np.array([[mseresult,ssimresult,psnrresult,corrresult]])
         allres=np.concatenate((allres,therow),axis=0)
-    fname=msefilename(matfile,arch)
-    createfolder(getfoldernamefrompath(fname))
     allres = np.delete(allres, (0), axis=0)
     print(fname)
     np.savetxt(fname,allres,delimiter=',', fmt='%f')
@@ -392,12 +390,10 @@ def plotDGMM(label,pred,predm,mse,msem,matfile,n,arch,experimentname):
     imgs_comb = PIL.Image.fromarray( imgs_comb)
     imgs_comb.save(fnamegab)
     
-def plotVAE(label,pred,predm,mse,msem,matfile,n,arch,experimentname):
-    fname1=getfigpath(matfile,'resultpict'+'\\'+arch,experimentname,n)
-    createfolder(getsubfolderfrompath(fname1))
-    rows=['Stimulus','VAE','SLR']
+def plotVAE(label,pred,mse,fname1,fname2,fnamegab,title,titlemse):
+    rows=['Stimulus','Reconstruct']
     idx=list(range(1,len(mse)+1))
-    fig, ax = plt.subplots(nrows=3, ncols=10,figsize=(15, 5))
+    fig, ax = plt.subplots(nrows=2, ncols=10,figsize=(15, 5))
     for axes, row in zip(ax[:,0], rows):
         axes.set_ylabel(row, rotation=90, size='large')
     for idn,col,fig in zip(idx,ax[0],label):
@@ -413,30 +409,20 @@ def plotVAE(label,pred,predm,mse,msem,matfile,n,arch,experimentname):
         col.set_xticklabels([])
         col.set_xticks([])
         col.imshow(p.reshape((28,28)).T, cmap=plt.cm.gray,interpolation='nearest')
-    for col,pm in zip(ax[2],predm):
-        col.set_yticklabels([])
-        col.set_yticks([])
-        col.set_xticklabels([])
-        col.set_xticks([])
-        col.imshow(pm.reshape((28,28)).T, cmap=plt.cm.gray,interpolation='nearest')
-    plt.suptitle(' Comparison of '+arch+' and SLR Reconstruction, part '+str(n), fontsize=16)
+    plt.suptitle(title, fontsize=16)
     # plt.show()
     plt.savefig(fname1)
     
-    fname2=getfigpath(matfile,'resultmse'+'\\'+arch,experimentname,n)
-    createfolder(getsubfolderfrompath(fname2))
     fige, axe = plt.subplots(figsize=(15, 5))
-    axe.plot(idx, mse, color = 'green', label = 'mse vae')
-    axe.plot(idx, msem, color = 'red', label = 'mse slr')
+    axe.plot(idx, mse, color = 'green', label = 'mse rec')
+    #axe.plot(idx, mse, color = 'red', label = 'mse slr')
     axe.legend(loc = 'lower left')
     axe.set_xticks(idx)
     # plt.show()
-    plt.suptitle('Comparison of Mean Square Error', fontsize=16)
+    plt.suptitle(titlemse, fontsize=16)
     plt.savefig(fname2)
     
     import PIL
-    fnamegab=getfigpath(matfile,'results'+'\\'+arch,experimentname,n)
-    createfolder(getsubfolderfrompath(fnamegab))
     
     list_im = [fname1, fname2]
     imgs    = [ PIL.Image.open(i) for i in list_im ]

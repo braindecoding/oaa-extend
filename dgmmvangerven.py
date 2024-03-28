@@ -222,93 +222,47 @@ for i in range(numTest):
     X_reconstructed_mu[i,:,:,:] = x_reconstructed_mu
     
 # In[]: simpan ke dalam folder
-# Existing code
+# get stim and rec variabel
 stim = X_test[:, :, :, 0].reshape(10, 784)
 rec = X_reconstructed_mu[:, 0, :, :].reshape(10, 784)
 
+from lib.dirfile import createfolder
+rootfolder=sys.argv[1]+"_"+sys.argv[2]+"_"+sys.argv[3]+"_"+sys.argv[4]+"/"
+stimulus_folder=rootfolder+"stim"
+reconstructed_folder=rootfolder+"rec"
+score_folder=rootfolder+"score"
 
 
-import os
-
-# Specify the directory path
-directory = "stim"
-
-# Check if the directory already exists
-if not os.path.exists(directory):
-    # Create the directory
-    os.makedirs(directory)
-    print("Directory created successfully!")
-else:
-    print("Directory already exists!")
-    
-directory = "rec"
-
-# Check if the directory already exists
-if not os.path.exists(directory):
-    # Create the directory
-    os.makedirs(directory)
-    print("Directory created successfully!")
-else:
-    print("Directory already exists!")
-
-directory = "recm"
-
-# Check if the directory already exists
-if not os.path.exists(directory):
-    # Create the directory
-    os.makedirs(directory)
-    print("Directory created successfully!")
-else:
-    print("Directory already exists!")
-    
-directory = "recm"
+createfolder(stimulus_folder)#stimulus folder
+createfolder(reconstructed_folder)#reconstruction folder
+createfolder(score_folder)#mse,ssim dll
 
 from lib.fidis import save_array_as_image
 # Save stim array as images
 for i in range(len(stim)):
-    save_array_as_image(np.rot90(np.fliplr(stim[i].reshape(28, 28))), f'stim/image_{i}.png')
+    save_array_as_image(np.rot90(np.fliplr(stim[i].reshape(28, 28))), f'{stimulus_folder}/image_{i}.png')
 
 # Save rec array as images
 for i in range(len(rec)):
-    save_array_as_image(np.rot90(np.fliplr(rec[i].reshape(28, 28))), f'rec/image_{i}.png')
+    save_array_as_image(np.rot90(np.fliplr(rec[i].reshape(28, 28))), f'{reconstructed_folder}/image_{i}.png')
 
-# Save rec miyawaki array as images
-from sklearn.model_selection import train_test_split
-from lib.dgmm import loadtrainandlabel,loadtestandlabel
-from lib.bdtb import simpanMSE, simpanMSEMiyawaki, plotDGMM,ubahkelistofchunks,simpanScore
-matlist=[]
-matlist.append('./data/de_s1_V1_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
-#matlist.append('../de_s1_V2_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
-#matlist.append('../de_s1_V1V2_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
-#matlist.append('../de_s1_V3VP_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
-#matlist.append('../de_s1_AllArea_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
 
-# In[]: train and predict rolly
-matfile=matlist[0]
 
-train_data,label=loadtrainandlabel(matfile)
-testdt,testlb=loadtestandlabel(matfile)
-predm,labelm,msem=simpanMSEMiyawaki()
 # In[]: Load dataset, dengan train dan test bentuk menggunakan testdt dan testlb saja
-from lib.bdtb import simpanScore28,plotVAE
+from lib.bdtb import simpanScore28,plotVAE,ubahkelistofchunks
 
 # Continue with the rest of your existing code
 
-scoreresults = simpanScore28(stim, rec, matfile, 'VAE')
+scoreresults = simpanScore28(stim, rec, score_folder+"/score.csv")
+mse = ((stim - rec)**2).mean(axis=1)
 
-#scoreresults_miyawaki = simpanScore(stim, Miyawaki_2, matfile, 'Miyawaki')
-
-mse = simpanMSE(stim, rec, matfile, 'VAE')
-#msem = simpanMSE(stim, Miyawaki_2, matfile, 'miyawaki')
-
-chunk = 10
-lmse, lmsem, lpred, lpredm, llabel = ubahkelistofchunks(mse, mse, rec, rec, stim, chunk)
-
-n = 1
-for label, pred, predm, mse, msem in zip(llabel, lpred, lpredm, lmse, lmsem):
-    plotVAE(label, pred, pred, mse, mse, matfile, n, 'VAE',experimentname)
-    n = n + 1
+plot_folder=rootfolder+"plot"
+fname1=plot_folder+"/fig.png"
+fname2=plot_folder+"/graph.png"
+fnamegab=plot_folder+"/result.png"
 
 
-# In[]:
-np.savetxt('skorvae.csv',scoreresults,delimiter=',')
+title="Reconnstruction Result with Z="+sys.argv[1]+", IDM="+sys.argv[2]+", Batch="+sys.argv[3]+", Iter="+sys.argv[4]
+
+plotVAE(stim,rec,mse,fname1,fname2,fnamegab,title,"MSE Result")
+
