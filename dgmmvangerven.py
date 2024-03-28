@@ -43,18 +43,32 @@ import sys
 # total arguments
 n = len(sys.argv)
 print("Total arguments passed:", n)
- 
-# Arguments passed K+intermediate_dim + K + maxiter + batch_size
-print("\nName of Python script:", sys.argv[0])
- 
-print("\nArguments passed:", end = " ")
-for i in range(1, n):
-    print(sys.argv[i], end = " ")
 
-K=int(sys.argv[1])
-intermediate_dim=int(sys.argv[2])
-batch_size=int(sys.argv[3])
-maxiter=int(sys.argv[4])
+
+try: 
+    # Arguments passed K+intermediate_dim + K + maxiter + batch_size
+    print("\nName of Python script:", sys.argv[0])
+     
+    print("\nArguments passed:", end = " ")
+    for i in range(1, n):
+        print(sys.argv[i], end = " ")
+    
+    K=int(sys.argv[1])
+    intermediate_dim=int(sys.argv[2])
+    batch_size=int(sys.argv[3])
+    maxiter=int(sys.argv[4])
+except:
+    # Arguments passed K+intermediate_dim + K + maxiter + batch_size
+    print("\nName of Python script:", "tanpa argumen")
+    print("\nNo Arguments passed")
+    K=6
+    intermediate_dim=64
+    batch_size=10
+    maxiter=10
+
+
+
+
 experimentname=str(K)+"_"+str(intermediate_dim)+"_" + str(batch_size)+"_" + str(maxiter)
 
 
