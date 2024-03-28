@@ -283,12 +283,8 @@ for i in range(len(rec)):
 
 # Save rec miyawaki array as images
 from sklearn.model_selection import train_test_split
-X_train, X_test, Y_train, Y_test, Miyawaki_1, Miyawaki_2 = train_test_split( x, y, z,test_size=20, random_state=7)    
-for i in range(len(rec)):
-    save_array_as_image(np.rot90(np.fliplr(Miyawaki_2[i].reshape(10, 10))), f'recm/image_{i}.png')
-
-# Continue with the rest of your existing code
-from lib.bdtb import simpanMSE, plotDGMM,ubahkelistofchunks,simpanScore
+from lib.dgmm import loadtrainandlabel,loadtestandlabel
+from lib.bdtb import simpanMSE, simpanMSEMiyawaki, plotDGMM,ubahkelistofchunks,simpanScore
 matlist=[]
 matlist.append('./data/de_s1_V1_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
 #matlist.append('../de_s1_V2_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
@@ -298,6 +294,22 @@ matlist.append('./data/de_s1_V1_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_
 
 # In[]: train and predict rolly
 matfile=matlist[0]
+
+train_data,label=loadtrainandlabel(matfile)
+testdt,testlb=loadtestandlabel(matfile)
+predm,labelm,msem=simpanMSEMiyawaki()
+# In[]: Load dataset, dengan train dan test bentuk menggunakan testdt dan testlb saja
+
+
+x=testlb.astype('float32')
+y=testdt.astype('float32')
+z=predm.astype('float32')
+
+X_train, X_test, Y_train, Y_test, Miyawaki_1, Miyawaki_2 = train_test_split( x, y, z,test_size=20, random_state=7)    
+for i in range(len(rec)):
+    save_array_as_image(np.rot90(np.fliplr(Miyawaki_2[i].reshape(10, 10))), f'recm/image_{i}.png')
+
+# Continue with the rest of your existing code
 
 scoreresults = simpanScore(stim, rec, matfile, 'VAE')
 scoreresults_miyawaki = simpanScore(stim, Miyawaki_2, matfile, 'Miyawaki')
