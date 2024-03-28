@@ -14,6 +14,8 @@ skormiyawaki.csv
 skorvae.csv
 stim/
 
+FID_Results.csv
+
 
 # C extensions
 *.so
