@@ -24,7 +24,7 @@ from lib import prepro,ars,obj,init,train
 
 # In[]: Load dataset X stimulus Y fMRI
 resolution = 28
-#X_train,X_test,Y_train,Y_test=prepro.getXY('digit69_28x28.mat',resolution)
+
 X_train, X_test, X_validation, Y_train, Y_test, Y_validation=prepro.getXYVal('./data/digit69_28x28.mat',resolution)
 
 # In[]: Set the model parameters and hyper-parameters
@@ -33,10 +33,8 @@ nb_epoch = 1
 batch_size = 10
 D1 = X_train.shape[1]*X_train.shape[2]*X_train.shape[3]
 D2 = Y_train.shape[1]
-K = 6 # dimensi latent space
+
 C = 5
-#intermediate_dim = 128 # origin
-intermediate_dim = 256 # origin
 
 import sys
  
@@ -53,7 +51,7 @@ try:
     for i in range(1, n):
         print(sys.argv[i], end = " ")
     
-    K=int(sys.argv[1])
+    K=int(sys.argv[1])# dimensi latent space
     intermediate_dim=int(sys.argv[2])
     batch_size=int(sys.argv[3])
     maxiter=int(sys.argv[4])
@@ -62,7 +60,7 @@ except:
     print("\nName of Python script:", "tanpa argumen")
     print("\nNo Arguments passed")
     K=6
-    intermediate_dim=64
+    intermediate_dim=128
     batch_size=10
     maxiter=10
 
@@ -223,27 +221,6 @@ for i in range(numTest):
     x_reconstructed_mu = temp_mu / L # mendapatkan rata2 dari semua rekonstruksi citra monte carlo
     X_reconstructed_mu[i,:,:,:] = x_reconstructed_mu
     
-
-
-# In[]:# visualization the reconstructed images, output in var X_reconstructed_mu
-# =============================================================================
-# n = 10
-# for j in range(1):
-#     plt.figure(figsize=(12, 2))    
-#     for i in range(n):
-#         # display original images
-#         ax = plt.subplot(2, n, i +j*n*2 + 1)
-#         plt.imshow(np.rot90(np.fliplr(X_test[i+j*n].reshape(resolution ,resolution ))),cmap='hot')
-#         ax.get_xaxis().set_visible(False)
-#         ax.get_yaxis().set_visible(False)
-#         # display reconstructed images
-#         ax = plt.subplot(2, n, i + n + j*n*2 + 1)
-#         plt.imshow(np.rot90(np.fliplr(X_reconstructed_mu[i+j*n].reshape(resolution ,resolution ))),cmap='hot')
-#         ax.get_xaxis().set_visible(False)
-#         ax.get_yaxis().set_visible(False)
-#     plt.show()
-# =============================================================================
-
 # In[]: simpan ke dalam folder
 # Existing code
 stim = X_test[:, :, :, 0].reshape(10, 784)

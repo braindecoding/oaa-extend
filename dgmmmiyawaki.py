@@ -25,8 +25,6 @@ from tensorflow.keras.models import Model
 from tensorflow.keras import backend
 from numpy import random
 from tensorflow.keras import optimizers
-#import matlab.engine
-#eng=matlab.engine.start_matlab()
 from tensorflow.keras import metrics
 
 from tensorflow.python.framework.ops import disable_eager_execution
@@ -56,46 +54,11 @@ y=testdt.astype('float32')
 z=predm.astype('float32')
 
 X_train, X_test, Y_train, Y_test, Miyawaki_1, Miyawaki_2 = train_test_split( x, y, z,test_size=20, random_state=7)
-#tambah data validasi karena indikasi kecurangan
-#X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size=0.2, random_state=7)
+#tambah data validasi menggunakan k-fold
 X_train, X_validation, Y_train, Y_validation = train_test_split(X_train, Y_train, test_size=0.2, random_state=7)
-# Pembagian Dataset tanpa random
-# fmri=testdt.astype('float32')
-# pict=testlb.astype('float32')
-
-# Y_train = fmri[:100]
-# Y_test = fmri[-20:]
-
-# X_train = pict[:100]
-# X_test = pict[-20:]
-
-# # In[]: Load dataset, yg beda test itu bentuk train acak. 
-# Y_train = train_data.astype('float32')
-# Y_test = testdt.astype('float32')
-
-# X_train = label#90 gambar dalam baris isi per baris 784 kolom
-# X_test = testlb#10 gambar dalam baris isi 784 kolom
-# X_train = X_train.astype('float32') / 255.
-# X_test = X_test.astype('float32') / 255.
-
-
-# # In[]: lihat isinya, ketika dijalankan hasilnya jelek
-# stim0=np.reshape(X_test[0],(10,10)).T
-# stim1=np.reshape(X_test[1],(10,10)).T
-# stim2=np.reshape(X_test[2],(10,10)).T
-# stim3=np.reshape(X_test[3],(10,10)).T
-
-# stimtrain0=np.reshape(X_train[0],(10,10)).T
-# stimtrain1=np.reshape(X_train[1],(10,10)).T
-# stimtrain2=np.reshape(X_train[2],(10,10)).T
-# stimtrain3=np.reshape(X_train[3],(10,10)).T
-
 
 # In[]: X adalah gambar stimulus,ukuran pixel 28x28 = 784 di flatten sebelumnya dalam satu baris, 28 row x 28 column dengan channel 1(samaa kaya miyawaki)
 resolution = 10#sebelumnya 28
-#channel di depan
-#X_train = X_train.reshape([X_train.shape[0], 1, resolution, resolution])
-#X_test = X_test.reshape([X_test.shape[0], 1, resolution, resolution])
 #channel di belakang(edit rolly)
 X_train = X_train.reshape([X_train.shape[0], resolution, resolution, 1])
 X_validation = X_validation.reshape([X_validation.shape[0], resolution, resolution, 1])
@@ -129,9 +92,9 @@ batch_size = 10
 #resolution = 28
 D1 = X_train.shape[1]*X_train.shape[2]*X_train.shape[3]
 D2 = Y_train.shape[1]
-K = 6 #panjang fitur untuk Z (latent space)
+
 C = 5 # membentuk diagonal array nilai 1 ditengahnya ukuran CxC(mungkin matrix identitas)
-intermediate_dim = 128
+
 
 
 import sys
@@ -147,7 +110,7 @@ print("\nArguments passed:", end = " ")
 for i in range(1, n):
     print(sys.argv[i], end = " ")
 
-K=int(sys.argv[1])
+K=int(sys.argv[1])#panjang fitur untuk Z (latent space)
 intermediate_dim=int(sys.argv[2])
 batch_size=int(sys.argv[3])
 maxiter=int(sys.argv[4])
@@ -426,26 +389,6 @@ for i in range(numTest):
         temp_mu = temp_mu + x_reconstructed_mu # ati2 nih disini main tambahin aja
     x_reconstructed_mu = temp_mu / L
     X_reconstructed_mu[i,:,:,:] = x_reconstructed_mu
-
-# In[]:# visualization the reconstructed images
-# =============================================================================
-# n = 20
-# for j in range(1):
-#     plt.figure(figsize=(12, 2))    
-#     for i in range(n):
-#         # display original images
-#         ax = plt.subplot(2, n, i +j*n*2 + 1)
-#         plt.imshow(np.rot90(np.fliplr(X_test[i+j*n].reshape(resolution ,resolution ))),cmap='hot')
-#         ax.get_xaxis().set_visible(False)
-#         ax.get_yaxis().set_visible(False)
-#         # display reconstructed images
-#         ax = plt.subplot(2, n, i + n + j*n*2 + 1)
-#         plt.imshow(np.rot90(np.fliplr(X_reconstructed_mu[i+j*n].reshape(resolution ,resolution ))),cmap='hot')
-#         ax.get_xaxis().set_visible(False)
-#         ax.get_yaxis().set_visible(False)
-#     plt.show()
-# 
-# =============================================================================
 
 # In[]: Hitung FID dan IS dan MSE
 # Existing code
