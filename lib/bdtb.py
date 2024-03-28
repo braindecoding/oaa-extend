@@ -55,6 +55,24 @@ def simpanSemuaGambar(pxlb,piksel,matfile):
         simpanGambar(stim,recon,getfigpath(matfile,'reconstruct',n))
         n=n+1
 
+def simpanScore28(label,pred,matfile,arch):
+    allres=np.zeros(shape=(1,4))
+    for limagerow,predimagerow in zip(label,pred):
+        mlabel=rowtoimagematrix28(limagerow)
+        mpred=rowtoimagematrix28(predimagerow)
+        mseresult=msescore(mlabel,mpred)
+        ssimresult=ssimscore(mlabel,mpred)
+        psnrresult=psnrscore(mlabel,mpred)
+        corrresult=corrscore(mlabel,mpred)
+        therow=np.array([[mseresult,ssimresult,psnrresult,corrresult]])
+        allres=np.concatenate((allres,therow),axis=0)
+    fname=msefilename(matfile,arch)
+    createfolder(getfoldernamefrompath(fname))
+    allres = np.delete(allres, (0), axis=0)
+    print(fname)
+    np.savetxt(fname,allres,delimiter=',', fmt='%f')
+    return allres
+
 def simpanScore(label,pred,matfile,arch):
     allres=np.zeros(shape=(1,4))
     for limagerow,predimagerow in zip(label,pred):
@@ -241,6 +259,10 @@ def rowtoimagematrix(rowimage):
     matriximage=rowimage.reshape((10,10)).T
     return matriximage
 
+def rowtoimagematrix28(rowimage):
+    matriximage=rowimage.reshape((28,28)).T
+    return matriximage
+
 def plotting(label,pred,predm,fname):
     cols=['stimulus','rolly','miyawaki']
     fig, ax = plt.subplots(nrows=10, ncols=3,figsize=(5, 20))
@@ -370,6 +392,61 @@ def plotDGMM(label,pred,predm,mse,msem,matfile,n,arch,experimentname):
     imgs_comb = PIL.Image.fromarray( imgs_comb)
     imgs_comb.save(fnamegab)
     
+def plotVAE(label,pred,predm,mse,msem,matfile,n,arch,experimentname):
+    fname1=getfigpath(matfile,'resultpict'+'\\'+arch,experimentname,n)
+    createfolder(getsubfolderfrompath(fname1))
+    rows=['Stimulus','VAE','SLR']
+    idx=list(range(1,len(mse)+1))
+    fig, ax = plt.subplots(nrows=3, ncols=10,figsize=(15, 5))
+    for axes, row in zip(ax[:,0], rows):
+        axes.set_ylabel(row, rotation=90, size='large')
+    for idn,col,fig in zip(idx,ax[0],label):
+        col.set_yticklabels([])
+        col.set_yticks([])
+        col.set_xticklabels([])
+        col.set_xticks([])
+        col.imshow(fig.reshape((28,28)).T, cmap=plt.cm.gray,interpolation='nearest')
+        col.set_title(idn)
+    for col,p in zip(ax[1],pred):
+        col.set_yticklabels([])
+        col.set_yticks([])
+        col.set_xticklabels([])
+        col.set_xticks([])
+        col.imshow(p.reshape((28,28)).T, cmap=plt.cm.gray,interpolation='nearest')
+    for col,pm in zip(ax[2],predm):
+        col.set_yticklabels([])
+        col.set_yticks([])
+        col.set_xticklabels([])
+        col.set_xticks([])
+        col.imshow(pm.reshape((28,28)).T, cmap=plt.cm.gray,interpolation='nearest')
+    plt.suptitle(' Comparison of '+arch+' and SLR Reconstruction, part '+str(n), fontsize=16)
+    # plt.show()
+    plt.savefig(fname1)
+    
+    fname2=getfigpath(matfile,'resultmse'+'\\'+arch,experimentname,n)
+    createfolder(getsubfolderfrompath(fname2))
+    fige, axe = plt.subplots(figsize=(15, 5))
+    axe.plot(idx, mse, color = 'green', label = 'mse vae')
+    axe.plot(idx, msem, color = 'red', label = 'mse slr')
+    axe.legend(loc = 'lower left')
+    axe.set_xticks(idx)
+    # plt.show()
+    plt.suptitle('Comparison of Mean Square Error', fontsize=16)
+    plt.savefig(fname2)
+    
+    import PIL
+    fnamegab=getfigpath(matfile,'results'+'\\'+arch,experimentname,n)
+    createfolder(getsubfolderfrompath(fnamegab))
+    
+    list_im = [fname1, fname2]
+    imgs    = [ PIL.Image.open(i) for i in list_im ]
+    
+    min_shape = sorted( [(np.sum(i.size), i.size ) for i in imgs])[0][1]
+    imgs_comb = np.hstack( (np.asarray( i.resize(min_shape) ) for i in imgs ) )
+    
+    imgs_comb = np.vstack( (np.asarray( i.resize(min_shape) ) for i in imgs ) )
+    imgs_comb = PIL.Image.fromarray( imgs_comb)
+    imgs_comb.save(fnamegab)
 
 def delfirstCol(testlb):
     return np.delete(testlb,0,1)
