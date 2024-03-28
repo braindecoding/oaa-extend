@@ -288,6 +288,17 @@ for i in range(len(rec)):
     save_array_as_image(np.rot90(np.fliplr(Miyawaki_2[i].reshape(10, 10))), f'recm/image_{i}.png')
 
 # Continue with the rest of your existing code
+from lib.bdtb import simpanMSE, plotDGMM,ubahkelistofchunks,simpanScore
+matlist=[]
+matlist.append('./data/de_s1_V1_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
+#matlist.append('../de_s1_V2_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
+#matlist.append('../de_s1_V1V2_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
+#matlist.append('../de_s1_V3VP_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
+#matlist.append('../de_s1_AllArea_Ecc1to11_baseByRestPre_smlr_s1071119ROI_resol10_leave0_1x1_preprocessed.mat')
+
+# In[]: train and predict rolly
+matfile=matlist[0]
+
 scoreresults = simpanScore(stim, rec, matfile, 'VAE')
 scoreresults_miyawaki = simpanScore(stim, Miyawaki_2, matfile, 'Miyawaki')
 
