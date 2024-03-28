@@ -236,15 +236,71 @@ stim = X_test[:, :, :, 0].reshape(10, 784)
 rec = X_reconstructed_mu[:, 0, :, :].reshape(10, 784)
 
 
-# Calculate IS
-#is_score, is_std = calculate_inception_score(rec, batch_size=2, resize=True, splits=10)
-#print('Inception Score:', is_score, '±', is_std)
+
+import os
+
+# Specify the directory path
+directory = "stim"
+
+# Check if the directory already exists
+if not os.path.exists(directory):
+    # Create the directory
+    os.makedirs(directory)
+    print("Directory created successfully!")
+else:
+    print("Directory already exists!")
+    
+directory = "rec"
+
+# Check if the directory already exists
+if not os.path.exists(directory):
+    # Create the directory
+    os.makedirs(directory)
+    print("Directory created successfully!")
+else:
+    print("Directory already exists!")
+
+directory = "recm"
+
+# Check if the directory already exists
+if not os.path.exists(directory):
+    # Create the directory
+    os.makedirs(directory)
+    print("Directory created successfully!")
+else:
+    print("Directory already exists!")
+    
+directory = "recm"
 
 from lib.fidis import save_array_as_image
 # Save stim array as images
 for i in range(len(stim)):
-    save_array_as_image(np.rot90(np.fliplr(stim[i].reshape(28, 28))), f'stim/image_{i}.png')
+    save_array_as_image(np.rot90(np.fliplr(stim[i].reshape(10, 10))), f'stim/image_{i}.png')
 
 # Save rec array as images
 for i in range(len(rec)):
-    save_array_as_image(np.rot90(np.fliplr(rec[i].reshape(28, 28))), f'rec/image_{i}.png')
+    save_array_as_image(np.rot90(np.fliplr(rec[i].reshape(10, 10))), f'rec/image_{i}.png')
+
+# Save rec miyawaki array as images
+for i in range(len(rec)):
+    save_array_as_image(np.rot90(np.fliplr(Miyawaki_2[i].reshape(10, 10))), f'recm/image_{i}.png')
+
+# Continue with the rest of your existing code
+scoreresults = simpanScore(stim, rec, matfile, 'VAE')
+scoreresults_miyawaki = simpanScore(stim, Miyawaki_2, matfile, 'Miyawaki')
+
+mse = simpanMSE(stim, rec, matfile, 'VAE')
+msem = simpanMSE(stim, Miyawaki_2, matfile, 'miyawaki')
+
+chunk = 10
+lmse, lmsem, lpred, lpredm, llabel = ubahkelistofchunks(mse, msem, rec, Miyawaki_2, stim, chunk)
+
+n = 1
+for label, pred, predm, mse, msem in zip(llabel, lpred, lpredm, lmse, lmsem):
+    plotDGMM(label, pred, predm, mse, msem, matfile, n, 'VAE',experimentname)
+    n = n + 1
+
+
+# In[]:
+np.savetxt('skorvae.csv',scoreresults,delimiter=',')
+np.savetxt('skormiyawaki.csv',scoreresults_miyawaki,delimiter=',')
