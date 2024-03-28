@@ -275,11 +275,11 @@ directory = "recm"
 from lib.fidis import save_array_as_image
 # Save stim array as images
 for i in range(len(stim)):
-    save_array_as_image(np.rot90(np.fliplr(stim[i].reshape(10, 10))), f'stim/image_{i}.png')
+    save_array_as_image(np.rot90(np.fliplr(stim[i].reshape(28, 28))), f'stim/image_{i}.png')
 
 # Save rec array as images
 for i in range(len(rec)):
-    save_array_as_image(np.rot90(np.fliplr(rec[i].reshape(10, 10))), f'rec/image_{i}.png')
+    save_array_as_image(np.rot90(np.fliplr(rec[i].reshape(28, 28))), f'rec/image_{i}.png')
 
 # Save rec miyawaki array as images
 for i in range(len(rec)):
