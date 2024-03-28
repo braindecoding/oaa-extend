@@ -282,6 +282,8 @@ for i in range(len(rec)):
     save_array_as_image(np.rot90(np.fliplr(rec[i].reshape(28, 28))), f'rec/image_{i}.png')
 
 # Save rec miyawaki array as images
+from sklearn.model_selection import train_test_split
+X_train, X_test, Y_train, Y_test, Miyawaki_1, Miyawaki_2 = train_test_split( x, y, z,test_size=20, random_state=7)    
 for i in range(len(rec)):
     save_array_as_image(np.rot90(np.fliplr(Miyawaki_2[i].reshape(10, 10))), f'recm/image_{i}.png')
 
