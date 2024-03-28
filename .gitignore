@@ -2,7 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+*.png
+*.csv
 # experiment result
 V1_1x1_mse/
 V1_1x1_resultmse/
