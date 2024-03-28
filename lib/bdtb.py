@@ -57,6 +57,7 @@ def simpanSemuaGambar(pxlb,piksel,matfile):
 
 def simpanScore28(label,pred,fname):
     allres=np.zeros(shape=(1,4))
+    header = "MSE,SSIM,PSNR,Correlation"  # Define the header string
     for limagerow,predimagerow in zip(label,pred):
         mlabel=rowtoimagematrix28(limagerow)
         mpred=rowtoimagematrix28(predimagerow)
@@ -68,7 +69,7 @@ def simpanScore28(label,pred,fname):
         allres=np.concatenate((allres,therow),axis=0)
     allres = np.delete(allres, (0), axis=0)
     print(fname)
-    np.savetxt(fname,allres,delimiter=',', fmt='%f')
+    np.savetxt(fname, allres, delimiter=',', fmt='%f', header=header, comments='')
     return allres
 
 def simpanScore(label,pred,matfile,arch):
