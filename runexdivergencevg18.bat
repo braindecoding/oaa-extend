@@ -1,5 +1,3 @@
-Rem experimentname=str(K)+"_"+str(intermediate_dim)+"_" + str(batch_size)+"_" + str(maxiter)
-
 python dgmmvangerven.py 18 128 10 1500
 python fidvg.py 18 128 10 1500
 python dgmmvangerven.py 18 128 10 2000
