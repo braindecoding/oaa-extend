@@ -9,7 +9,7 @@ def calculate_fid(real_images, generated_images, batch_size=10):
     if len(gpu)==0:
         dev='cpu'
     else:
-        dev='gpu'
+        dev='cuda'
     fid = fid_score.calculate_fid_given_paths([real_images, generated_images], batch_size=min(batch_size, len(real_images)), device=dev, dims=2048)
     return fid
 
