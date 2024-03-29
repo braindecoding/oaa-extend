@@ -3,6 +3,6 @@ matplotlib
 scipy
 scikit-image
 scikit-learn
-tensorflow
+tensorflow==2.15.1
 tensorflow_addons
 pytorch-fid
