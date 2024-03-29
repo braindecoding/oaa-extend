@@ -258,9 +258,3 @@ createfolder(plot_folder)
 title="Reconnstruction Result with Z="+sys.argv[1]+", IDM="+sys.argv[2]+", Batch="+sys.argv[3]+", Iter="+sys.argv[4]
 
 plotVAE(stim,rec,mse,fname1,fname2,fnamegab,title,"MSE Result")
-# In[]: hitung FID
-from lib.fidis import calculate_fid
-fid_value = calculate_fid(stimulus_folder,reconstructed_folder)
-print('FID:', fid_value)
-with open("FID_Results.csv", "a") as myfile:
-    myfile.write(experimentname+","+str(fid_value)+"\n")
