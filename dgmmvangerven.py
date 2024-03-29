@@ -10,7 +10,6 @@ Modified and development by @awangga
 import os    
 os.environ['THEANO_FLAGS'] = "device=gpu"  
 import numpy as np
-import matplotlib.pyplot as plt
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model
 from tensorflow.keras import backend
