@@ -4,20 +4,8 @@ Created on Fri Jan  5 14:47:17 2024
 
 @author: Rolly Maulana Awangga
 """
-
-from pytorch_fid import fid_score
 import sys
-import tensorflow as tf
-
-def calculate_fid(real_images, generated_images, batch_size=10):
-    gpu=tf.config.list_physical_devices('GPU')
-    if len(gpu)==0:
-        dev='cpu'
-    else:
-        dev='gpu'
-    fid = fid_score.calculate_fid_given_paths([real_images, generated_images], batch_size=min(batch_size, len(real_images)), device=dev, dims=2048)
-    return fid
-
+from lib.fidis import calculate_fid
 
 if __name__ == '__main__':
     K=int(sys.argv[1])
