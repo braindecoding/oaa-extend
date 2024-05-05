@@ -6,7 +6,8 @@ rem Define parameters
 set "intermediate_dims=(128 256 512)"
 set "batch_sizes=(10 20 30 40 50)"
 set "max_iters=(500 1000 1500)"
-set "latent=(3 6 12 18)"
+rem set "latent=(3 6 12 18)"
+set "latent=(9 15)"
 
 rem Loop over latent
 for %%z in %latent% do (
