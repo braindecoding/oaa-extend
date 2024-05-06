@@ -19,6 +19,7 @@ for %%z in %latent% do (
             for %%k in %max_iters% do (
                 rem Run scripts
                 python dgmmvangerven.py %%z %%i %%j %%k
+				python fidvg.py %%z %%i %%j %%k
             )
         )
     )
