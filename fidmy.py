@@ -15,7 +15,10 @@ if __name__ == '__main__':
     maxiter=int(sys.argv[4])
     experimentname=str(K)+","+str(intermediate_dim)+"," + str(batch_size)+"," + str(maxiter)
     # Calculate FID - Frechet Inception Distance (FID)
-    fid_value = calculate_fid("stim","rec")
+    rootfolder="my/"+sys.argv[1]+"_"+sys.argv[2]+"_"+sys.argv[3]+"_"+sys.argv[4]+"/"
+    stimulus_folder=rootfolder+"stim"
+    reconstructed_folder=rootfolder+"rec"
+    fid_value = calculate_fid(stimulus_folder,reconstructed_folder)
     print('FID:', fid_value)
     with open("FID_Results.csv", "a") as myfile:
         myfile.write(experimentname+","+str(fid_value)+"\n")
