@@ -395,59 +395,39 @@ for i in range(numTest):
 stim = X_test[:, :, :, 0].reshape(20, 100)
 rec = X_reconstructed_mu[:, 0, :, :].reshape(20, 100)
 
+# In[]: simpan ke dalam folder
 
+from lib.dirfile import createfolder
+rootfolder="my/"+sys.argv[1]+"_"+sys.argv[2]+"_"+sys.argv[3]+"_"+sys.argv[4]+"/"
+stimulus_folder=rootfolder+"stim"
+reconstructed_folder=rootfolder+"rec"
+reconstructedm_folder=rootfolder+"recm"
+score_folder=rootfolder+"score"
+scorem_folder=rootfolder+"scorem"
 
-import os
-
-# Specify the directory path
-directory = "stim"
-
-# Check if the directory already exists
-if not os.path.exists(directory):
-    # Create the directory
-    os.makedirs(directory)
-    print("Directory created successfully!")
-else:
-    print("Directory already exists!")
-    
-directory = "rec"
-
-# Check if the directory already exists
-if not os.path.exists(directory):
-    # Create the directory
-    os.makedirs(directory)
-    print("Directory created successfully!")
-else:
-    print("Directory already exists!")
-
-directory = "recm"
-
-# Check if the directory already exists
-if not os.path.exists(directory):
-    # Create the directory
-    os.makedirs(directory)
-    print("Directory created successfully!")
-else:
-    print("Directory already exists!")
-    
-directory = "recm"
+createfolder(stimulus_folder)#stimulus folder
+createfolder(reconstructed_folder)#reconstruction folder
+createfolder(reconstructedm_folder)#reconstruction folder
+createfolder(score_folder)#mse,ssim dll
+createfolder(scorem_folder)#mse,ssim dll
 
 from lib.fidis import save_array_as_image
 # Save stim array as images
 for i in range(len(stim)):
-    save_array_as_image(np.rot90(np.fliplr(stim[i].reshape(10, 10))), f'stim/image_{i}.png')
+    save_array_as_image(np.rot90(np.fliplr(stim[i].reshape(10, 10))), f'{stimulus_folder}/image_{i}.png')
 
 # Save rec array as images
 for i in range(len(rec)):
-    save_array_as_image(np.rot90(np.fliplr(rec[i].reshape(10, 10))), f'rec/image_{i}.png')
+    save_array_as_image(np.rot90(np.fliplr(rec[i].reshape(10, 10))), f'{reconstructed_folder}/image_{i}.png')
 
 # Save rec miyawaki array as images
 for i in range(len(rec)):
-    save_array_as_image(np.rot90(np.fliplr(Miyawaki_2[i].reshape(10, 10))), f'recm/image_{i}.png')
+    save_array_as_image(np.rot90(np.fliplr(Miyawaki_2[i].reshape(10, 10))), f'{reconstructedm_folder}/image_{i}.png')
 
-# Continue with the rest of your existing code
-scoreresults = simpanScore(stim, rec, matfile, 'VAE')
-scoreresults_miyawaki = simpanScore(stim, Miyawaki_2, matfile, 'Miyawaki')
+# In[]: Save miyawaki score and vae score
+scoreresults = simpanScore(stim, rec, matfile, score_folder+"/score.csv")
+
+scoreresults_miyawaki = simpanScore(stim, Miyawaki_2, matfile, scorem_folder+"/scorem.csv")#miyawaki ubah ke folder name
 
 mse = simpanMSE(stim, rec, matfile, 'VAE')
 msem = simpanMSE(stim, Miyawaki_2, matfile, 'miyawaki')
@@ -455,12 +435,13 @@ msem = simpanMSE(stim, Miyawaki_2, matfile, 'miyawaki')
 chunk = 10
 lmse, lmsem, lpred, lpredm, llabel = ubahkelistofchunks(mse, msem, rec, Miyawaki_2, stim, chunk)
 
+plot_folder=rootfolder+"plot"
+fname1=plot_folder+"/fig.png"
+fname2=plot_folder+"/graph.png"
+fnamegab=plot_folder+"/result.png"
+createfolder(plot_folder)
+
 n = 1
 for label, pred, predm, mse, msem in zip(llabel, lpred, lpredm, lmse, lmsem):
-    plotDGMM(label, pred, predm, mse, msem, matfile, n, 'VAE',experimentname)
+    plotDGMM(label, pred, predm, mse, msem, fname1,fname2,fnamegab, n, 'VAE')
     n = n + 1
-
-
-# In[]:
-np.savetxt('skorvae.csv',scoreresults,delimiter=',')
-np.savetxt('skormiyawaki.csv',scoreresults_miyawaki,delimiter=',')

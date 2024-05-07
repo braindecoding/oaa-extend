@@ -219,7 +219,7 @@ stim = X_test[:, :, :, 0].reshape(10, 784)
 rec = X_reconstructed_mu[:, 0, :, :].reshape(10, 784)
 
 from lib.dirfile import createfolder
-rootfolder=sys.argv[1]+"_"+sys.argv[2]+"_"+sys.argv[3]+"_"+sys.argv[4]+"/"
+rootfolder="vg/"+sys.argv[1]+"_"+sys.argv[2]+"_"+sys.argv[3]+"_"+sys.argv[4]+"/"
 stimulus_folder=rootfolder+"stim"
 reconstructed_folder=rootfolder+"rec"
 score_folder=rootfolder+"score"

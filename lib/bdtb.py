@@ -72,8 +72,9 @@ def simpanScore28(label,pred,fname):
     np.savetxt(fname, allres, delimiter=',', fmt='%f', header=header, comments='')
     return allres
 
-def simpanScore(label,pred,matfile,arch):
+def simpanScore(label,pred,matfile,fname):
     allres=np.zeros(shape=(1,4))
+    header = "MSE,SSIM,PSNR,Correlation"  # Define the header string
     for limagerow,predimagerow in zip(label,pred):
         mlabel=rowtoimagematrix(limagerow)
         mpred=rowtoimagematrix(predimagerow)
@@ -83,11 +84,9 @@ def simpanScore(label,pred,matfile,arch):
         corrresult=corrscore(mlabel,mpred)
         therow=np.array([[mseresult,ssimresult,psnrresult,corrresult]])
         allres=np.concatenate((allres,therow),axis=0)
-    fname=msefilename(matfile,arch)
-    createfolder(getfoldernamefrompath(fname))
     allres = np.delete(allres, (0), axis=0)
     print(fname)
-    np.savetxt(fname,allres,delimiter=',', fmt='%f')
+    np.savetxt(fname, allres, delimiter=',', fmt='%f', header=header, comments='')
     return allres
 
 def simpanMSE(label,pred,matfile,arch):#matfile digunakan untuk menamai file
@@ -335,8 +334,7 @@ def plotHasil(label,pred,predm,mse,msem,matfile,experimentname,n,arch):
     imgs_comb = PIL.Image.fromarray( imgs_comb)
     imgs_comb.save(fnamegab)
 
-def plotDGMM(label,pred,predm,mse,msem,matfile,n,arch,experimentname):
-    fname1=getfigpath(matfile,'resultpict'+'\\'+arch,experimentname,n)
+def plotDGMM(label,pred,predm,mse,msem,fname1,fname2,fnamegab,n,arch):
     createfolder(getsubfolderfrompath(fname1))
     rows=['Stimulus','VAE','SLR']
     idx=list(range(1,len(mse)+1))
@@ -365,8 +363,6 @@ def plotDGMM(label,pred,predm,mse,msem,matfile,n,arch,experimentname):
     plt.suptitle(' Comparison of '+arch+' and SLR Reconstruction, part '+str(n), fontsize=16)
     # plt.show()
     plt.savefig(fname1)
-    
-    fname2=getfigpath(matfile,'resultmse'+'\\'+arch,experimentname,n)
     createfolder(getsubfolderfrompath(fname2))
     fige, axe = plt.subplots(figsize=(15, 5))
     axe.plot(idx, mse, color = 'green', label = 'mse vae')
@@ -378,7 +374,6 @@ def plotDGMM(label,pred,predm,mse,msem,matfile,n,arch,experimentname):
     plt.savefig(fname2)
     
     import PIL
-    fnamegab=getfigpath(matfile,'results'+'\\'+arch,experimentname,n)
     createfolder(getsubfolderfrompath(fnamegab))
     
     list_im = [fname1, fname2]
