@@ -335,7 +335,6 @@ def plotHasil(label,pred,predm,mse,msem,matfile,experimentname,n,arch):
     imgs_comb.save(fnamegab)
 
 def plotDGMM(label,pred,predm,mse,msem,fname1,fname2,fnamegab,n,arch):
-    createfolder(getsubfolderfrompath(fname1))
     rows=['Stimulus','VAE','SLR']
     idx=list(range(1,len(mse)+1))
     fig, ax = plt.subplots(nrows=3, ncols=10,figsize=(15, 5))
