@@ -362,7 +362,6 @@ def plotDGMM(label,pred,predm,mse,msem,fname1,fname2,fnamegab,n,arch):
     plt.suptitle(' Comparison of '+arch+' and SLR Reconstruction, part '+str(n), fontsize=16)
     # plt.show()
     plt.savefig(fname1)
-    createfolder(getsubfolderfrompath(fname2))
     fige, axe = plt.subplots(figsize=(15, 5))
     axe.plot(idx, mse, color = 'green', label = 'mse vae')
     axe.plot(idx, msem, color = 'red', label = 'mse slr')
@@ -373,7 +372,6 @@ def plotDGMM(label,pred,predm,mse,msem,fname1,fname2,fnamegab,n,arch):
     plt.savefig(fname2)
     
     import PIL
-    createfolder(getsubfolderfrompath(fnamegab))
     
     list_im = [fname1, fname2]
     imgs    = [ PIL.Image.open(i) for i in list_im ]
