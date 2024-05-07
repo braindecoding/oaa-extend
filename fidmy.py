@@ -20,5 +20,5 @@ if __name__ == '__main__':
     reconstructed_folder=rootfolder+"rec"
     fid_value = calculate_fid(stimulus_folder,reconstructed_folder)
     print('FID:', fid_value)
-    with open("FID_Results_My.csv", "a") as myfile:
+    with open("my/FID_Results_My.csv", "a") as myfile:
         myfile.write(experimentname+","+str(fid_value)+"\n")
