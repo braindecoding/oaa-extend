@@ -1,31 +1,31 @@
-# OAA
+# OAA  
 
-High-Quality Reconstruction of fMRI Visual Stimuli Using Optimized Autoencoder Architecture
+**High-Quality Reconstruction of fMRI Visual Stimuli Using an Optimized Autoencoder Architecture**  
 
-Perhitungan fid harus terpisah karena dia memanfaatkan multi threading jadi tidak bisa disatukan dalam satu file
+FID calculation must be done separately because it utilizes multi-threading, so it cannot be combined into a single file.  
 
-## Dataset Van Gerven
+## Van Gerven Dataset  
 
-Untuk melakukan uji dengan dataset Van Gerven run:
+To run tests using the Van Gerven dataset, execute:  
 
 ```sh
 runvg.bat
-```
+```  
 
-Script ini akan melakukan run script python dgmmvangerven dan fidvg
+This script will run the Python scripts `dgmmvangerven.py` and `fidvg.py`.  
 
-* dgmmvangerven.py : untuk melakukan rekonstruksi citra dengan error MSE, mengeluarkan folder output setiap hyperparameter yang didalam nya terdapat sub folder hasil rekon
-* fidvg.py : melakukan perhitungan FID dari folder stim yang berisi stimulus asal dan rec yang merupakan hasil rekonstruksi dari file dgmmvangerven.py
+- **`dgmmvangerven.py`**: Performs image reconstruction with MSE error, generating an output folder for each hyperparameter, which contains subfolders with the reconstruction results.  
+- **`fidvg.py`**: Calculates the FID (Fréchet Inception Distance) from the `stim` folder, which contains the original stimuli, and the `rec` folder, which contains the reconstruction results from `dgmmvangerven.py`.  
 
-## Dataset Miyawaki
+## Miyawaki Dataset  
 
-Untuk melakukan rekonstruksi pada data set miyawaki:
+To perform reconstruction on the Miyawaki dataset, execute:  
 
 ```sh
 runmy.bat
-```
+```  
 
-Script ini akan melakukan run script python dgmmmiyawaki.py dan fid
+This script will run the Python scripts `dgmmmiyawaki.py` and `fid.py`.  
 
-* dgmmmiyawaki.py : untuk melakukan rekonstruksi citra dengan error MSE, mengeluarkan folder output setiap hyperparameter yang didalam nya terdapat sub folder hasil rekon
-* fidvg.py : melakukan perhitungan FID dari folder stim yang berisi stimulus asal dan rec yang merupakan hasil rekonstruksi dari file dgmmmiyawaki.py
+- **`dgmmmiyawaki.py`**: Performs image reconstruction with MSE error, generating an output folder for each hyperparameter, which contains subfolders with the reconstruction results.  
+- **`fidmy.py`**: Calculates the FID from the `stim` folder, which contains the original stimuli, and the `rec` folder, which contains the reconstruction results from `dgmmmiyawaki.py`.  
