@@ -2,6 +2,12 @@
 
 **High-Quality Reconstruction of fMRI Visual Stimuli Using an Optimized Autoencoder Architecture**  
 
+Code Repository: [GitHub - braindecoding/supl](https://github.com/braindecoding/oaa)  
+Code Page: [Page - braindecoding/oaa](https://braindecoding.github.io/oaa/)
+Supplementary Files Repository: [GitHub - braindecoding/supl](https://github.com/braindecoding/supl)  
+Supplementary Files Page: [Page - braindecoding/supl](https://braindecoding.github.io/supl/)  
+
+
 FID calculation must be done separately because it utilizes multi-threading, so it cannot be combined into a single file.  
 
 ## Van Gerven Dataset  
