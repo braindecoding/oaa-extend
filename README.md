@@ -1,4 +1,4 @@
-# OAA  
+# OAA  Code
 
 **High-Quality Reconstruction of fMRI Visual Stimuli Using an Optimized Autoencoder Architecture**  
 
