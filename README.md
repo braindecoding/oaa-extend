@@ -1,6 +1,6 @@
-# ifir
+# OAA
 
-Innovative Framework for Image Reconstruction from Visual Cortex
+High-Quality Reconstruction of fMRI Visual Stimuli Using Optimized Autoencoder Architecture
 
 Perhitungan fid harus terpisah karena dia memanfaatkan multi threading jadi tidak bisa disatukan dalam satu file
 
