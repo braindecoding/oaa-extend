@@ -16,7 +16,7 @@ for z in "${latent[@]}"; do
             # Loop over max iterations
             for k in "${max_iters[@]}"; do
                 # Run scripts
-                python dgmmmiyawaki.py "$z" "$i" "$j" "$k"
+                python oaamiyawaki.py "$z" "$i" "$j" "$k"
                 python fidmy.py "$z" "$i" "$j" "$k"
             done
         done
