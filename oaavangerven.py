@@ -8,7 +8,7 @@ Modified and development by @awangga
 """
 # In[]:Atur GPU sebelum import tensorflow
 import os    
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"  # Ubah ke "2" jika ingin pakai GPU2
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"  # Ubah ke "2" jika ingin pakai GPU2
 os.environ['THEANO_FLAGS'] = "device=gpu"  # Opsional, hanya jika Theano digunakan
 
 
