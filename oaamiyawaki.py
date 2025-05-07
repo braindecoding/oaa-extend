@@ -4,16 +4,22 @@ Created on Fri Jun  4 13:25:26 2021
 
 @author: rolly maulana awangga
 """
-# In[]: jika terjadi error pada saat running cnn gunakan ini
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
 
+
+# In[]:Atur GPU sebelum import tensorflow
+import os    
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Ubah ke "2" jika ingin pakai GPU2
+os.environ['THEANO_FLAGS'] = "device=gpu"  # Opsional, hanya jika Theano digunakan
+
+# In[]: jika terjadi error pada saat running cnn gunakan ini
+from tensorflow.compat.v1 import ConfigProto, InteractiveSession
 config = ConfigProto()
 config.gpu_options.allow_growth = True
 session = InteractiveSession(config=config)
+from tensorflow.python.framework.ops import disable_eager_execution
+disable_eager_execution()
+
 # In[]:
-import os    
-os.environ['THEANO_FLAGS'] = "device=gpu"  
 import numpy as np
 import matplotlib.pyplot as plt
 #from scipy.io import savemat
@@ -27,8 +33,7 @@ from numpy import random
 from tensorflow.keras import optimizers
 from tensorflow.keras import metrics
 
-from tensorflow.python.framework.ops import disable_eager_execution
-disable_eager_execution()
+
 from lib.dgmm import loadtrainandlabel,loadtestandlabel
 from lib.bdtb import simpanMSE, simpanMSEMiyawaki, plotDGMM,ubahkelistofchunks,simpanScore
 

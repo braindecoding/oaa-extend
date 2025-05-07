@@ -6,9 +6,12 @@ Inspired from
 and Miyawaki on Kamitami Labs
 Modified and development by @awangga
 """
-
+# In[]:Atur GPU sebelum import tensorflow
 import os    
-os.environ['THEANO_FLAGS'] = "device=gpu"  
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"  # Ubah ke "2" jika ingin pakai GPU2
+os.environ['THEANO_FLAGS'] = "device=gpu"  # Opsional, hanya jika Theano digunakan
+
+
 import numpy as np
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model

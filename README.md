@@ -38,7 +38,7 @@ This script will run the Python scripts `dgmmmiyawaki.py` and `fid.py`.
 - **`fidmy.py`**: Calculates the FID from the `stim` folder, which contains the original stimuli, and the `rec` folder, which contains the reconstruction results from `dgmmmiyawaki.py`.  
 
 
-## Using uv VirtualEnv
+## Installation using uv VirtualEnv
 
 ```sh
 uv python install 3.8
@@ -46,3 +46,14 @@ uv venv --python 3.8
 source .venv/bin/activate
 uv pip install -r requirements.txt
 ```
+
+## Run on Multiple GPUS
+
+If your server has multiple GPUs, you can specify which GPU to use by setting the environment variable CUDA_VISIBLE_DEVICES.  
+To do this, edit line 11 in your script:
+
+```py
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"  # Change to "2" to use GPU2, or "0" for GPU0
+```
+
+This ensures that only the specified GPU will be visible to TensorFlow.
