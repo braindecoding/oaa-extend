@@ -36,3 +36,13 @@ This script will run the Python scripts `dgmmmiyawaki.py` and `fid.py`.
 
 - **`oaamiyawaki.py`**: Performs image reconstruction with MSE error, generating an output folder for each hyperparameter, which contains subfolders with the reconstruction results.  
 - **`fidmy.py`**: Calculates the FID from the `stim` folder, which contains the original stimuli, and the `rec` folder, which contains the reconstruction results from `dgmmmiyawaki.py`.  
+
+
+## Using uv VirtualEnv
+
+```sh
+uv python install 3.8
+uv venv --python 3.8
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
