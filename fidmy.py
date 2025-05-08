@@ -5,6 +5,13 @@ Created on Fri Jan  5 14:47:17 2024
 @author: Rolly Maulana Awangga
 """
 
+# In[]:Atur GPU sebelum import tensorflow
+import os    
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Ubah ke "2" jika ingin pakai GPU2
+os.environ['THEANO_FLAGS'] = "device=gpu"  # Opsional, hanya jika Theano digunakan
+
+
+
 import sys
 from lib.fidis import calculate_fid
 
