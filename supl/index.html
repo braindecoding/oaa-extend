@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blok Diagram DGMM-VAE</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .block {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            min-width: 200px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        .block:hover {
+            transform: translateY(-2px);
+        }
+        
+        .block.input {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .block.preprocessing {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .block.initialization {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .block.architecture {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .block.training {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .block.reconstruction {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .block.evaluation {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+        }
+        
+        .arrow {
+            font-size: 24px;
+            color: #34495e;
+            font-weight: bold;
+        }
+        
+        .sub-blocks {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        
+        .sub-block {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: normal;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .training-loop {
+            border: 3px dashed #e74c3c;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(231, 76, 60, 0.05);
+            margin: 20px 0;
+        }
+        
+        .loop-title {
+            color: #e74c3c;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .parallel-blocks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .details {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .details h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            Blok Diagram Deep Generative Multiview Model (DGMM)<br>
+            dengan Variational Autoencoder untuk Rekonstruksi Citra fMRI
+        </div>
+        
+        <div class="diagram">
+            <!-- Input Phase -->
+            <div class="block input">
+                <strong>INPUT DATA</strong>
+                <div class="sub-blocks">
+                    <div class="sub-block">Citra Stimulus (X): 28×28×1</div>
+                    <div class="sub-block">Data fMRI (Y): 1×D2</div>
+                    <div class="sub-block">Dataset: digit 6 & 9</div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <!-- Preprocessing -->
+            <div class="block preprocessing">
+                <strong>PREPROCESSING & SETUP</strong>
+                <div class="sub-blocks">
+                    <div class="sub-block">Data Split: Train/Test/Validation</div>
+                    <div class="sub-block">GPU Configuration</div>
+                    <div class="sub-block">Hyperparameter Setting</div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <!-- Parameter Initialization -->
+            <div class="block initialization">
+                <strong>INISIALISASI PARAMETER</strong>
+                <div class="sub-blocks">
+                    <div class="sub-block">Z_mu, Z_lsgms (Latent Variables)</div>
+                    <div class="sub-block">B_mu (Visual-to-Latent Projection)</div>
+                    <div class="sub-block">H_mu (Latent-to-fMRI Projection)</div>
+                    <div class="sub-block">R_mu (Noise Component)</div>
+                    <div class="sub-block">Hyperparameters: τ, η, γ</div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <!-- Architecture Building -->
+            <div class="block architecture">
+                <strong>BANGUN ARSITEKTUR VAE</strong>
+                <div class="parallel-blocks">
+                    <div class="sub-block">
+                        <strong>Encoder</strong><br>
+                        X → [Z_mu, Z_lsgms]<br>
+                        Conv2D + Dense Layers
+                    </div>
+                    <div class="sub-block">
+                        <strong>Decoder</strong><br>
+                        Z → [X_mu, X_lsgms]<br>
+                        Dense + Deconv2D Layers
+                    </div>
+                    <div class="sub-block">
+                        <strong>Custom Loss</strong><br>
+                        L = Lp + 10000×Lx + Ly<br>
+                        KL + Reconstruction + fMRI
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <!-- Training Loop -->
+            <div class="training-loop">
+                <div class="loop-title">🔄 ITERATIVE TRAINING LOOP (maxiter iterations)</div>
+                
+                <div class="parallel-blocks">
+                    <div class="block training" style="margin: 0;">
+                        <strong>1. UPDATE Z</strong><br>
+                        <div class="sub-block">Train VAE Model</div>
+                        <div class="sub-block">Z_mu, Z_lsgms = encoder.predict()</div>
+                    </div>
+                    
+                    <div class="block training" style="margin: 0;">
+                        <strong>2. UPDATE B</strong><br>
+                        <div class="sub-block">Visual-to-Latent Projection</div>
+                        <div class="sub-block">Bayesian Linear Regression</div>
+                    </div>
+                    
+                    <div class="block training" style="margin: 0;">
+                        <strong>3. UPDATE H</strong><br>
+                        <div class="sub-block">Latent-to-fMRI Projection</div>
+                        <div class="sub-block">MAP Estimation</div>
+                    </div>
+                    
+                    <div class="block training" style="margin: 0;">
+                        <strong>4. UPDATE R</strong><br>
+                        <div class="sub-block">Noise Component</div>
+                        <div class="sub-block">Residual Modeling</div>
+                    </div>
+                </div>
+                
+                <div class="arrow">↓</div>
+                
+                <div class="block training">
+                    <strong>UPDATE HYPERPARAMETERS</strong>
+                    <div class="sub-blocks">
+                        <div class="sub-block">τ_mu (Precision B)</div>
+                        <div class="sub-block">η_mu (Precision H)</div>
+                        <div class="sub-block">γ_mu (Noise Precision)</div>
+                    </div>
+                </div>
+                
+                <div class="arrow">↓</div>
+                
+                <div class="block training">
+                    <strong>RECALCULATE Y_mu & Y_lsgms</strong>
+                    <div class="sub-blocks">
+                        <div class="sub-block">Y_mu = Z_mu × B_mu + R_mu × H_mu</div>
+                        <div class="sub-block">Y_lsgms = log(1/γ_mu)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <!-- KNN Similarity -->
+            <div class="block preprocessing">
+                <strong>SIMILARITY MATRIX (KNN)</strong>
+                <div class="sub-blocks">
+                    <div class="sub-block">S = calculate.S(k=10, t=10.0, Y_train, Y_validation)</div>
+                    <div class="sub-block">Spatial Regularization</div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <!-- Reconstruction Phase -->
+            <div class="block reconstruction">
+                <strong>REKONSTRUKSI CITRA (TESTING)</strong>
+                <div class="sub-blocks">
+                    <div class="sub-block">Bayesian Posterior: z_σ_test, z_μ_test</div>
+                    <div class="sub-block">Monte Carlo Sampling (L=100)</div>
+                    <div class="sub-block">Image Generation: decoder.predict(z_test)</div>
+                </div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <!-- Output and Evaluation -->
+            <div class="block evaluation">
+                <strong>OUTPUT & EVALUASI</strong>
+                <div class="parallel-blocks">
+                    <div class="sub-block">
+                        <strong>Hasil Rekonstruksi</strong><br>
+                        X_reconstructed (10×28×28×1)
+                    </div>
+                    <div class="sub-block">
+                        <strong>Metrik Evaluasi</strong><br>
+                        MSE, SSIM, FID Score
+                    </div>
+                    <div class="sub-block">
+                        <strong>Visualisasi</strong><br>
+                        Plot Comparison, Save Images
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Technical Details -->
+        <div class="details">
+            <h3>🔧 Detail Teknis Implementasi</h3>
+            <ul>
+                <li><strong>Framework:</strong> TensorFlow/Keras dengan backend GPU</li>
+                <li><strong>Arsitektur Encoder:</strong> Conv2D(64,3) → Flatten → Dense(intermediate_dim) → Dense(K×2)</li>
+                <li><strong>Arsitektur Decoder:</strong> Dense(intermediate_dim) → Reshape → UpSampling2D → Conv2DTranspose</li>
+                <li><strong>Optimizer:</strong> Adam (lr=0.001, β₁=0.9, β₂=0.999)</li>
+                <li><strong>Reparameterization Trick:</strong> z = μ + σ × ε, dimana ε ~ N(0,1)</li>
+                <li><strong>Monte Carlo Sampling:</strong> L=100 sampel untuk robust reconstruction</li>
+            </ul>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);"></div>
+                <span>Input/Data</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                <span>Preprocessing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                <span>Initialization</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                <span>Architecture</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+                <span>Training Process</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+                <span>Reconstruction</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);"></div>
+                <span>Output/Evaluation</span>
+            </div>
+        </div>
+        
+        <!-- Mathematical Foundation -->
+        <div class="details">
+            <h3>🧮 Fondasi Matematis</h3>
+            <p><strong>VAE Loss Function:</strong></p>
+            <p>ℒ = 𝔼<sub>q(z|x)</sub>[log p(x|z)] - KL(q(z|x)||p(z))</p>
+            
+            <p><strong>DGMM Objective:</strong></p>
+            <p>ℒ<sub>total</sub> = ℒ<sub>reconstruction</sub> + ℒ<sub>KL</sub> + ℒ<sub>fMRI</sub></p>
+            
+            <p><strong>Bayesian Update:</strong></p>
+            <p>p(θ|D) ∝ p(D|θ) × p(θ)</p>
+        </div>
+    </div>
+</body>
+</html>
