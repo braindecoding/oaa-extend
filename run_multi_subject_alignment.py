@@ -27,7 +27,7 @@ from extended.alignment_methods import (
     MultiSubjectAlignmentPipeline,
     compare_alignment_methods
 )
-from extended.multi_subject_dgmm import MultiSubjectDGMM
+from extended.multi_subject_vangerven import MultiSubjectVangerven
 from extended.evaluation_multi_subject import CrossSubjectEvaluator
 
 def save_alignment_results(aligned_data, alignment_metrics, loso_results,
@@ -219,25 +219,25 @@ def main_alignment_pipeline(n_subjects=3, alignment_method='hyperalignment'):
                 'Y': subject_data['Y'][:n_samples]
             }
 
-        # Adjust parameters for DGMM training
-        dgmm_params = params.copy()
+        # Adjust parameters for vangerven reconstruction training
+        vangerven_params = params.copy()
         if alignment_method == 'hyperalignment':
-            dgmm_params['n_components'] = 30  # Smaller for DGMM training
-            dgmm_params['max_iterations'] = 3
+            vangerven_params['n_components'] = 30  # Smaller for training
+            vangerven_params['max_iterations'] = 3
 
-        ms_dgmm = MultiSubjectDGMM(
+        ms_vangerven = MultiSubjectVangerven(
             alignment_method=alignment_method,
-            alignment_params=dgmm_params
+            alignment_params=vangerven_params
         )
 
-        ms_dgmm.fit(training_subset)
+        ms_vangerven.fit(training_subset)
 
-        print(f"✓ Subject-agnostic DGMM trained")
+        print(f"✓ Subject-agnostic vangerven reconstruction model trained")
 
         # Test prediction
         test_subject = list(training_subset.keys())[0]
         test_fmri = training_subset[test_subject]['Y'][:5]
-        predictions = ms_dgmm.predict(test_fmri)
+        predictions = ms_vangerven.predict(test_fmri)
 
         print(f"  Test prediction shape: {predictions.shape}")
 
@@ -257,12 +257,12 @@ def main_alignment_pipeline(n_subjects=3, alignment_method='hyperalignment'):
             pickle.dump(pipeline, f)
         print(f"✓ Saved pipeline: {pipeline_file}")
 
-        # Save trained DGMM model
-        dgmm_file = pipeline_file.replace('_pipeline.pkl', '_dgmm_model.pkl')
-        with open(dgmm_file, 'wb') as f:
-            pickle.dump(ms_dgmm, f)
-        output_files['dgmm_model'] = dgmm_file
-        print(f"✓ Saved DGMM model: {dgmm_file}")
+        # Save trained vangerven reconstruction model
+        vangerven_file = pipeline_file.replace('_pipeline.pkl', '_vangerven_model.pkl')
+        with open(vangerven_file, 'wb') as f:
+            pickle.dump(ms_vangerven, f)
+        output_files['vangerven_model'] = vangerven_file
+        print(f"✓ Saved vangerven model: {vangerven_file}")
 
         # Step 7: Summary
         elapsed_time = time.time() - start_time
@@ -274,7 +274,7 @@ def main_alignment_pipeline(n_subjects=3, alignment_method='hyperalignment'):
         print(f"Alignment method: {alignment_method}")
         print(f"Number of subjects: {n_subjects}")
         print(f"Cross-subject correlation: {loso_results['mean_scores']['correlation']:.4f}")
-        print(f"Subject-agnostic model: Ready for new subjects")
+        print(f"Subject-agnostic vangerven model: Ready for new subjects")
 
         print(f"\n📁 OUTPUT FILES:")
         for file_type, file_path in output_files.items():
@@ -285,7 +285,7 @@ def main_alignment_pipeline(n_subjects=3, alignment_method='hyperalignment'):
             'aligned_fmri': aligned_fmri,
             'alignment_metrics': alignment_metrics,
             'loso_results': loso_results,
-            'ms_dgmm': ms_dgmm,
+            'ms_vangerven': ms_vangerven,
             'pipeline': pipeline,
             'output_files': output_files
         }

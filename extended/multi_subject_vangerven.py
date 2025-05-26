@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Multi-Subject DGMM Implementation
+Multi-Subject fMRI Reconstruction for Vangerven Dataset
 Ridge Regression and Hyperalignment for cross-subject generalization
+Uses the vangerven digit reconstruction paradigm with multi-subject alignment.
 
 @author: Rolly Maulana Awangga
 """
@@ -11,34 +12,34 @@ import numpy as np
 import sys
 import os
 
-# Add the extended directory to path for imports
+# Add paths for imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from alignment_methods import (
     RidgeAlignment,
-    Hyperalignment,
-    ProcrustesAlignment,
-    MultiSubjectAlignmentPipeline,
-    AlignmentEvaluator,
-    compare_alignment_methods
+    Hyperalignment
 )
 
-# Import DGMM from lib directory
+# Import vangerven reconstruction functions from lib directory
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'lib'))
 try:
-    from dgmm import DGMM
+    import dgmm as vangerven_reconstruction
 except ImportError:
-    print("Warning: DGMM not found, using placeholder implementation")
-    DGMM = None
+    print("Warning: vangerven reconstruction module not found, using placeholder implementation")
+    vangerven_reconstruction = None
 
 
-
-class MultiSubjectDGMM:
-    """Extended DGMM for multi-subject data"""
+class MultiSubjectVangerven:
+    """
+    Multi-Subject fMRI Reconstruction using Vangerven Dataset
+    
+    This class implements subject-agnostic fMRI reconstruction using the vangerven
+    digit reconstruction paradigm with functional alignment techniques.
+    """
 
     def __init__(self, alignment_method='ridge', alignment_params=None):
         """
-        Initialize Multi-Subject DGMM
+        Initialize Multi-Subject Vangerven Reconstruction
 
         Args:
             alignment_method: 'ridge', 'hyperalignment', or 'none'
@@ -46,105 +47,95 @@ class MultiSubjectDGMM:
         """
         self.alignment_method = alignment_method
         self.alignment_params = alignment_params or {}
+        self.alignment = None
 
-        # Initialize alignment
+        # Initialize alignment method
         if alignment_method == 'ridge':
             self.alignment = RidgeAlignment(**self.alignment_params)
         elif alignment_method == 'hyperalignment':
             self.alignment = Hyperalignment(**self.alignment_params)
+        elif alignment_method == 'procrustes':
+            from alignment_methods import ProcrustesAlignment
+            self.alignment = ProcrustesAlignment(**self.alignment_params)
         elif alignment_method == 'none':
             self.alignment = None
         else:
             raise ValueError(f"Unknown alignment method: {alignment_method}")
 
-        self.dgmm_model = None
+        self.reconstruction_model = None
         self.fitted = False
 
     def fit(self, multi_subject_data):
         """
-        Fit multi-subject DGMM
+        Fit multi-subject vangerven reconstruction model
 
         Args:
             multi_subject_data: dict {subject_id: {'X': images, 'Y': fMRI}}
         """
 
-        print(f"Training Multi-Subject DGMM with {len(multi_subject_data)} subjects")
+        print(f"Training Multi-Subject Vangerven Reconstruction with {len(multi_subject_data)} subjects")
         print(f"Alignment method: {self.alignment_method}")
 
-        # Step 1: Align fMRI data if needed
+        # Step 1: Apply alignment to fMRI data
         if self.alignment is not None:
-            aligned_fmri = self._align_subjects(multi_subject_data)
+            print("Applying alignment to fMRI data...")
+            fmri_data = {sid: data['Y'] for sid, data in multi_subject_data.items()}
+            aligned_fmri = self.alignment.fit_transform(fmri_data)
         else:
+            print("No alignment applied")
             aligned_fmri = {sid: data['Y'] for sid, data in multi_subject_data.items()}
 
-        # Step 2: Combine data for training
-        all_images = np.vstack([data['X'] for data in multi_subject_data.values()])
-        all_fmri = np.vstack(list(aligned_fmri.values()))
+        # Step 2: Combine aligned data
+        all_images = []
+        all_fmri = []
 
-        print(f"Combined training data - Images: {all_images.shape}, fMRI: {all_fmri.shape}")
+        for subject_id, subject_data in multi_subject_data.items():
+            all_images.append(subject_data['X'])
+            all_fmri.append(aligned_fmri[subject_id])
 
-        # Step 3: Train DGMM on combined data
-        # TODO: Replace with actual DGMM training from oaavangerven_extended.py
-        print("Training DGMM on aligned multi-subject data...")
+        all_images = np.vstack(all_images)
+        all_fmri = np.vstack(all_fmri)
 
-        # Placeholder for DGMM training
-        self.dgmm_model = {
+        print(f"Combined data: {all_images.shape} images, {all_fmri.shape} fMRI")
+
+        # Step 3: Train vangerven reconstruction model on combined data
+        # TODO: Replace with actual vangerven reconstruction training
+        print("Training vangerven reconstruction model on aligned multi-subject data...")
+
+        # Placeholder for vangerven reconstruction training
+        self.reconstruction_model = {
             'images': all_images,
             'fmri': all_fmri,
             'alignment': self.alignment
         }
 
         self.fitted = True
+        print("Multi-Subject Vangerven Reconstruction training completed")
 
-        return self
-
-    def _align_subjects(self, multi_subject_data):
-        """Align fMRI data across subjects"""
-
-        subject_ids = list(multi_subject_data.keys())
-        fmri_data = {sid: data['Y'] for sid, data in multi_subject_data.items()}
-
-        if self.alignment_method == 'ridge':
-            # Use first subject as reference
-            reference_id = subject_ids[0]
-            reference_data = fmri_data[reference_id]
-
-            aligned_fmri = {reference_id: reference_data}
-
-            # Align all other subjects to reference
-            for subject_id in subject_ids[1:]:
-                source_data = fmri_data[subject_id]
-                aligned_data = self.alignment.fit_transform(source_data, reference_data)
-                aligned_fmri[subject_id] = aligned_data
-
-        elif self.alignment_method == 'hyperalignment':
-            aligned_fmri = self.alignment.fit_transform(fmri_data)
-
-        return aligned_fmri
-
-    def predict(self, new_subject_fmri, calibration_data=None):
+    def predict(self, new_subject_fmri):
         """
-        Predict for new subject
+        Predict images from new subject fMRI data
 
         Args:
-            new_subject_fmri: fMRI data from new subject
-            calibration_data: Optional data for alignment
+            new_subject_fmri: fMRI data for new subject
 
         Returns:
-            predictions: Reconstructed images
+            predicted_images: Reconstructed images
         """
-
         if not self.fitted:
             raise ValueError("Model must be fitted before prediction")
 
-        # Align new subject data if needed
-        if self.alignment is not None and calibration_data is not None:
+        print(f"Predicting for new subject with fMRI shape: {new_subject_fmri.shape}")
+
+        # Step 1: Apply alignment to new subject
+        if self.alignment is not None:
+            print("Applying alignment to new subject fMRI...")
             aligned_fmri = self.alignment.transform(new_subject_fmri)
         else:
             aligned_fmri = new_subject_fmri
 
-        # TODO: Use trained DGMM for prediction
-        print("Predicting with Multi-Subject DGMM...")
+        # TODO: Use trained vangerven reconstruction model for prediction
+        print("Predicting with Multi-Subject Vangerven Reconstruction...")
 
         # Placeholder prediction
         predictions = np.random.random((aligned_fmri.shape[0], 28, 28, 1))
@@ -153,13 +144,13 @@ class MultiSubjectDGMM:
 
 # Example usage and testing
 if __name__ == '__main__':
-    # Test Ridge Alignment
-    print("Testing Ridge Alignment...")
+    print("Testing Multi-Subject Vangerven Reconstruction")
 
-    # Generate synthetic data
+    # Test Ridge Alignment
+    print("\n--- Testing Ridge Alignment ---")
     np.random.seed(42)
-    source_data = np.random.randn(100, 50)  # 100 samples, 50 voxels
-    target_data = source_data @ np.random.randn(50, 50) + 0.1 * np.random.randn(100, 50)
+    source_data = np.random.randn(50, 30)
+    target_data = source_data @ np.random.randn(30, 30) + 0.1 * np.random.randn(50, 30)
 
     # Use alignment methods from alignment_methods.py
     ridge_align = RidgeAlignment(alpha=1.0)
@@ -187,8 +178,8 @@ if __name__ == '__main__':
     for subject_id, data in aligned_multi.items():
         print(f"{subject_id}: {data.shape}")
 
-    # Test Multi-Subject DGMM
-    print("\nTesting Multi-Subject DGMM...")
+    # Test Multi-Subject Vangerven Reconstruction
+    print("\nTesting Multi-Subject Vangerven Reconstruction...")
 
     # Create synthetic multi-subject dataset
     training_data = {}
@@ -210,16 +201,16 @@ if __name__ == '__main__':
             else:
                 params = {}
 
-            ms_dgmm = MultiSubjectDGMM(
+            ms_vangerven = MultiSubjectVangerven(
                 alignment_method=method,
                 alignment_params=params
             )
 
-            ms_dgmm.fit(training_data)
+            ms_vangerven.fit(training_data)
 
             # Test prediction on new subject
             new_fmri = np.random.randn(10, 100)
-            predictions = ms_dgmm.predict(new_fmri)
+            predictions = ms_vangerven.predict(new_fmri)
 
             print(f"Predictions shape: {predictions.shape}")
             print(f"Method {method} completed successfully")

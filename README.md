@@ -117,7 +117,7 @@ oaa-extend/
 ├── examples.py                       # Usage examples
 ├── extended/
 │   ├── alignment_methods.py          # Core alignment implementations
-│   ├── multi_subject_dgmm.py         # Multi-subject DGMM
+│   ├── multi_subject_vangerven.py    # Multi-subject vangerven reconstruction
 │   ├── real_data_adapter.py          # Real data integration
 │   └── evaluation_multi_subject.py   # Evaluation framework
 ├── lib/
@@ -129,7 +129,7 @@ oaa-extend/
 │   ├── alignment_*_aligned_data.npz  # Aligned fMRI data
 │   ├── alignment_*_metrics.json      # Evaluation metrics
 │   ├── alignment_*_pipeline.pkl      # Trained pipelines
-│   └── alignment_*_dgmm_model.pkl    # Trained models
+│   └── alignment_*_vangerven_model.pkl # Trained vangerven models
 └── requirements.txt                  # Dependencies
 ```
 
@@ -204,7 +204,7 @@ python run_multi_subject_alignment.py
 - `outputs/alignment_[method]_[timestamp]_aligned_data.npz` - Aligned fMRI data
 - `outputs/alignment_[method]_[timestamp]_metrics.json` - Evaluation metrics
 - `outputs/alignment_[method]_[timestamp]_pipeline.pkl` - Trained pipeline
-- `outputs/alignment_[method]_[timestamp]_dgmm_model.pkl` - Trained DGMM
+- `outputs/alignment_[method]_[timestamp]_vangerven_model.pkl` - Trained vangerven model
 - `outputs/alignment_[method]_[timestamp]_summary.txt` - Human-readable summary
 
 ### **Phase 2: Downstream Processing**
