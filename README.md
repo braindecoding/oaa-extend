@@ -122,7 +122,7 @@ oaa-extend/
 │   └── evaluation_multi_subject.py   # Evaluation framework
 ├── lib/
 │   ├── prepro.py                     # Data preprocessing
-│   └── dgmm.py                       # Core DGMM
+│   └── vangerven_reconstruction.py   # Core vangerven reconstruction
 ├── data/
 │   └── digit69_28x28.mat            # Real data file
 ├── outputs/                          # Generated alignment results

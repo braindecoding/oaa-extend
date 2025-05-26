@@ -23,7 +23,7 @@ from alignment_methods import (
 # Import vangerven reconstruction functions from lib directory
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'lib'))
 try:
-    import dgmm as vangerven_reconstruction
+    import vangerven_reconstruction
 except ImportError:
     print("Warning: vangerven reconstruction module not found, using placeholder implementation")
     vangerven_reconstruction = None
@@ -32,7 +32,7 @@ except ImportError:
 class MultiSubjectVangerven:
     """
     Multi-Subject fMRI Reconstruction using Vangerven Dataset
-    
+
     This class implements subject-agnostic fMRI reconstruction using the vangerven
     digit reconstruction paradigm with functional alignment techniques.
     """

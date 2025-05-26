@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jun  4 13:28:33 2021
+Vangerven fMRI Reconstruction Implementation
+Original implementation for digit reconstruction from fMRI data
+Based on the vangerven dataset and methodology.
 
+Created on Fri Jun  4 13:28:33 2021
 @author: RPL 2020
 """
 
