@@ -12,6 +12,9 @@ import numpy as np
 import sys
 import os
 import time
+import pickle
+import json
+from datetime import datetime
 
 # Add paths
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'extended'))
@@ -26,6 +29,100 @@ from extended.alignment_methods import (
 )
 from extended.multi_subject_dgmm import MultiSubjectDGMM
 from extended.evaluation_multi_subject import CrossSubjectEvaluator
+
+def save_alignment_results(aligned_data, alignment_metrics, loso_results,
+                          alignment_method, output_dir='./outputs'):
+    """
+    Save alignment results to files for modular processing
+
+    Args:
+        aligned_data: dict {subject_id: aligned_fMRI_data}
+        alignment_metrics: dict with alignment metrics
+        loso_results: dict with LOSO evaluation results
+        alignment_method: str, alignment method used
+        output_dir: str, output directory
+
+    Returns:
+        output_files: dict with paths to saved files
+    """
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    base_name = f"alignment_{alignment_method}_{timestamp}"
+
+    output_files = {}
+
+    # 1. Save aligned fMRI data (numpy format for easy loading)
+    aligned_data_file = os.path.join(output_dir, f"{base_name}_aligned_data.npz")
+    np.savez_compressed(aligned_data_file, **aligned_data)
+    output_files['aligned_data'] = aligned_data_file
+    print(f"✓ Saved aligned data: {aligned_data_file}")
+
+    # 2. Save alignment metrics (JSON format for readability)
+    metrics_file = os.path.join(output_dir, f"{base_name}_metrics.json")
+    with open(metrics_file, 'w') as f:
+        json.dump({
+            'alignment_metrics': alignment_metrics,
+            'loso_results': loso_results,
+            'alignment_method': alignment_method,
+            'timestamp': timestamp,
+            'data_shapes': {sid: data.shape for sid, data in aligned_data.items()}
+        }, f, indent=2, default=str)
+    output_files['metrics'] = metrics_file
+    print(f"✓ Saved metrics: {metrics_file}")
+
+    # 3. Save pipeline object (pickle format for reuse)
+    pipeline_file = os.path.join(output_dir, f"{base_name}_pipeline.pkl")
+    # Note: pipeline object will be saved separately
+    output_files['pipeline'] = pipeline_file
+
+    # 4. Create summary file
+    summary_file = os.path.join(output_dir, f"{base_name}_summary.txt")
+    with open(summary_file, 'w') as f:
+        f.write(f"Multi-Subject Alignment Results\n")
+        f.write(f"{'='*40}\n")
+        f.write(f"Method: {alignment_method}\n")
+        f.write(f"Timestamp: {timestamp}\n")
+        f.write(f"Number of subjects: {len(aligned_data)}\n")
+        f.write(f"\nData shapes:\n")
+        for subject_id, data in aligned_data.items():
+            f.write(f"  {subject_id}: {data.shape}\n")
+        f.write(f"\nAlignment metrics:\n")
+        for metric, value in alignment_metrics.items():
+            f.write(f"  {metric}: {value:.4f}\n")
+        f.write(f"\nLOSO evaluation:\n")
+        f.write(f"  Mean correlation: {loso_results['mean_scores']['correlation']:.4f} ± {loso_results['mean_scores']['correlation_std']:.4f}\n")
+        f.write(f"  Mean R²: {loso_results['mean_scores']['r2']:.4f} ± {loso_results['mean_scores']['r2_std']:.4f}\n")
+        f.write(f"\nFiles generated:\n")
+        for file_type, file_path in output_files.items():
+            f.write(f"  {file_type}: {os.path.basename(file_path)}\n")
+    output_files['summary'] = summary_file
+    print(f"✓ Saved summary: {summary_file}")
+
+    return output_files
+
+def load_alignment_results(aligned_data_file):
+    """
+    Load alignment results from saved files
+
+    Args:
+        aligned_data_file: path to .npz file with aligned data
+
+    Returns:
+        aligned_data: dict {subject_id: aligned_fMRI_data}
+    """
+    print(f"Loading alignment results from: {aligned_data_file}")
+
+    # Load aligned data
+    loaded = np.load(aligned_data_file)
+    aligned_data = {key: loaded[key] for key in loaded.files}
+
+    print(f"✓ Loaded {len(aligned_data)} subjects")
+    for subject_id, data in aligned_data.items():
+        print(f"  {subject_id}: {data.shape}")
+
+    return aligned_data
 
 def main_alignment_pipeline(n_subjects=3, alignment_method='hyperalignment'):
     """
@@ -144,7 +241,30 @@ def main_alignment_pipeline(n_subjects=3, alignment_method='hyperalignment'):
 
         print(f"  Test prediction shape: {predictions.shape}")
 
-        # Step 6: Summary
+        # Step 6: Save results to files for modular processing
+        print(f"\n6. Saving results to files...")
+
+        output_files = save_alignment_results(
+            aligned_fmri,
+            alignment_metrics,
+            loso_results,
+            alignment_method
+        )
+
+        # Save pipeline object
+        pipeline_file = output_files['pipeline']
+        with open(pipeline_file, 'wb') as f:
+            pickle.dump(pipeline, f)
+        print(f"✓ Saved pipeline: {pipeline_file}")
+
+        # Save trained DGMM model
+        dgmm_file = pipeline_file.replace('_pipeline.pkl', '_dgmm_model.pkl')
+        with open(dgmm_file, 'wb') as f:
+            pickle.dump(ms_dgmm, f)
+        output_files['dgmm_model'] = dgmm_file
+        print(f"✓ Saved DGMM model: {dgmm_file}")
+
+        # Step 7: Summary
         elapsed_time = time.time() - start_time
 
         print(f"\n{'='*60}")
@@ -156,13 +276,18 @@ def main_alignment_pipeline(n_subjects=3, alignment_method='hyperalignment'):
         print(f"Cross-subject correlation: {loso_results['mean_scores']['correlation']:.4f}")
         print(f"Subject-agnostic model: Ready for new subjects")
 
+        print(f"\n📁 OUTPUT FILES:")
+        for file_type, file_path in output_files.items():
+            print(f"  {file_type}: {os.path.basename(file_path)}")
+
         return {
             'multi_subject_data': multi_subject_data,
             'aligned_fmri': aligned_fmri,
             'alignment_metrics': alignment_metrics,
             'loso_results': loso_results,
             'ms_dgmm': ms_dgmm,
-            'pipeline': pipeline
+            'pipeline': pipeline,
+            'output_files': output_files
         }
 
     except Exception as e:

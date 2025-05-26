@@ -112,8 +112,9 @@ aligned_data, metrics = pipeline.fit_transform(multi_subject_fmri)
 
 ```
 oaa-extend/
-├── run_multi_subject_alignment.py    # Main execution script
-├── example_real_data_usage.py        # Usage examples
+├── run_multi_subject_alignment.py    # Main alignment pipeline (Phase 1)
+├── use_aligned_data.py               # Downstream processing (Phase 2)
+├── examples.py                       # Usage examples
 ├── extended/
 │   ├── alignment_methods.py          # Core alignment implementations
 │   ├── multi_subject_dgmm.py         # Multi-subject DGMM
@@ -124,6 +125,11 @@ oaa-extend/
 │   └── dgmm.py                       # Core DGMM
 ├── data/
 │   └── digit69_28x28.mat            # Real data file
+├── outputs/                          # Generated alignment results
+│   ├── alignment_*_aligned_data.npz  # Aligned fMRI data
+│   ├── alignment_*_metrics.json      # Evaluation metrics
+│   ├── alignment_*_pipeline.pkl      # Trained pipelines
+│   └── alignment_*_dgmm_model.pkl    # Trained models
 └── requirements.txt                  # Dependencies
 ```
 
@@ -160,10 +166,10 @@ results = compare_alignment_methods(
 python run_multi_subject_alignment.py
 ```
 
-### Example 2: Custom Alignment
+### Example 2: Usage Examples
 ```python
-# See example_real_data_usage.py for detailed examples
-python example_real_data_usage.py
+# See examples.py for detailed examples
+python examples.py
 ```
 
 ### Example 3: Evaluation Only
@@ -183,16 +189,42 @@ run_comprehensive_evaluation()
 
 ## 📚 Documentation
 
-- **Usage Examples**: `example_real_data_usage.py`
+- **Usage Examples**: `examples.py`
 - **API Documentation**: Inline docstrings in all modules
 
-## 🔄 Workflow
+## 🔄 Modular Workflow
 
-1. **Load Real Data**: `digit69_28x28.mat` → Multi-subject format
-2. **Apply Alignment**: Ridge/Hyperalignment for cross-subject consistency
-3. **Train Model**: Subject-agnostic DGMM with aligned data
-4. **Evaluate**: LOSO cross-validation for generalization assessment
-5. **Deploy**: Use trained model for new subjects
+### **Phase 1: Alignment & Training**
+```bash
+# Run alignment pipeline (saves results to files)
+python run_multi_subject_alignment.py
+```
+
+**Outputs**:
+- `outputs/alignment_[method]_[timestamp]_aligned_data.npz` - Aligned fMRI data
+- `outputs/alignment_[method]_[timestamp]_metrics.json` - Evaluation metrics
+- `outputs/alignment_[method]_[timestamp]_pipeline.pkl` - Trained pipeline
+- `outputs/alignment_[method]_[timestamp]_dgmm_model.pkl` - Trained DGMM
+- `outputs/alignment_[method]_[timestamp]_summary.txt` - Human-readable summary
+
+### **Phase 2: Downstream Processing**
+```bash
+# Use saved alignment results for downstream analysis
+python use_aligned_data.py
+
+# Compare different alignment sessions
+python use_aligned_data.py --compare
+
+# Use specific session
+python use_aligned_data.py --session alignment_hyperalignment_20241201_143022
+```
+
+### **Benefits of Modular Approach**:
+1. **Reusability**: Use alignment results multiple times without recomputation
+2. **Collaboration**: Share aligned data files with team members
+3. **Flexibility**: Try different downstream methods on same alignment
+4. **Reproducibility**: Exact reproduction of results from saved files
+5. **Efficiency**: Skip expensive alignment step for iterative analysis
 
 ## ✅ Production Ready
 
