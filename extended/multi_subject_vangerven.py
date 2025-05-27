@@ -63,6 +63,7 @@ class MultiSubjectVangerven:
             raise ValueError(f"Unknown alignment method: {alignment_method}")
 
         self.reconstruction_model = None
+        self.pipeline = None  # Store the alignment pipeline
         self.fitted = False
 
     def fit(self, multi_subject_data):
@@ -80,7 +81,14 @@ class MultiSubjectVangerven:
         if self.alignment is not None:
             print("Applying alignment to fMRI data...")
             fmri_data = {sid: data['Y'] for sid, data in multi_subject_data.items()}
-            aligned_fmri = self.alignment.fit_transform(fmri_data)
+
+            # Use MultiSubjectAlignmentPipeline for proper multi-subject alignment
+            from alignment_methods import MultiSubjectAlignmentPipeline
+            self.pipeline = MultiSubjectAlignmentPipeline(
+                alignment_method=self.alignment_method,
+                alignment_params=self.alignment_params
+            )
+            aligned_fmri, _ = self.pipeline.fit_transform(fmri_data)
         else:
             print("No alignment applied")
             aligned_fmri = {sid: data['Y'] for sid, data in multi_subject_data.items()}
@@ -128,9 +136,14 @@ class MultiSubjectVangerven:
         print(f"Predicting for new subject with fMRI shape: {new_subject_fmri.shape}")
 
         # Step 1: Apply alignment to new subject
-        if self.alignment is not None:
+        if self.pipeline is not None:
             print("Applying alignment to new subject fMRI...")
-            aligned_fmri = self.alignment.transform(new_subject_fmri)
+            # Use the stored pipeline to transform new subject data
+            try:
+                aligned_fmri = self.pipeline.transform_new_subject(new_subject_fmri, 'new_subject')
+            except Exception as e:
+                print(f"Warning: Pipeline transform failed ({str(e)}), using original data")
+                aligned_fmri = new_subject_fmri
         else:
             aligned_fmri = new_subject_fmri
 
